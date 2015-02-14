@@ -7,23 +7,28 @@
 class BitbucketHelper{
 	
 	private $ch;
-	function __construct(){
-		//Basic declaration of curl intits.
-		//Basic declaration of curl intits. 
-		$this->ch = curl_init();
-		curl_setopt($this->ch, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
-		curl_setopt($this->ch, CURLOPT_POST, true);
-		curl_setopt($this->ch, CURLOPT_HEADER, true);
-		curl_setopt($this->ch,CURLOPT_CUSTOMREQUEST, 'POST');
-		curl_setopt($this->ch, CURLOPT_SSL_VERIFYPEER, false);
-		curl_setopt($this->ch,CURLOPT_RETURNTRANSFER, true);
+	private $settings = array(
+		CURLOPT_HTTPAUTH => CURLAUTH_BASIC,
+			CURLOPT_POST => true,
+			CURLOPT_HEADER=> true,
+			CURLOPT_CUSTOMREQUEST => 'POST',
+			CURLOPT_SSL_VERIFYPEER => false,
+			CURLOPT_RETURNTRANSFER => true
+	);
+	function __construct($settings = null){
+		//Additional curl intits.
+		foreach($settings as $key=>$value)
+			array_push($this->settings, $this->settings[$key] = $value);
 	}
 	/**
 	 * Add a comment to the given repository via bitbucket.
 	 * @param string $args The URL, Password, Username, Title, and Comment.
 	 */
 	function addIssue($args = Arguments){
-
+		$this->ch = curl_init();
+		foreach($settings as $key=>$value){
+			curl_setopt($this->ch,  $key, $value);
+		}
 		$data = "title=".$args->title."&content=".$args->comment ."&status=new&priority=trivial&kind=bug";
 		
 		//Set the URL to get to.
