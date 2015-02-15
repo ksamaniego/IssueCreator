@@ -46,7 +46,7 @@ include APP_DIR . DS . "Settings/Constants.php"; // We only want one settings fi
 array_shift($argv);
 
 //Declare the arguement helper. 
-$argumentHelper = new ArgumentHelper;
+$argumentHelper = new ArgumentHelper();
 
 //Populate the Argument class which is the basic set up for the curl event 
 $settings = $argumentHelper->gatherArugments($argv);
@@ -61,8 +61,8 @@ if (strpos($settings->url,'https://api.github.com') !== false) {
 	$git->addIssue($settings);
 }
 else if(strpos($settings->url,'https://bitbucket.org') !== false){
-	$bitbucket = new BitbucketHelper();
-	$bitbucket->addIssue($settings);
+	$bitbucket = new BitbucketHelper($settings->url, $settings->userName, $settings->password);
+	$bitbucket->addIssue($settings->title, $settings->comment);
 	
 }
 else

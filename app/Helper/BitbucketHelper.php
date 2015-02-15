@@ -7,6 +7,10 @@
 class BitbucketHelper{
 	
 	private $ch;
+	private $url;
+	private $username;
+	private $password;
+	
 	private $settings = array(
 		CURLOPT_HTTPAUTH => CURLAUTH_BASIC,
 			CURLOPT_POST => true,
@@ -15,8 +19,18 @@ class BitbucketHelper{
 			CURLOPT_SSL_VERIFYPEER => false,
 			CURLOPT_RETURNTRANSFER => true
 	);
-	function __construct($settings = null){
+	/**
+	 * 
+	 * @param string $url The URL of the repository. 
+	 * @param string $username The Username you wish to use. 
+	 * @param string $password The password you wish to use. 
+	 * @param string $settings Any additional settings you want via curl_setopt.
+	 */
+	function __construct($url, $username, $password,$settings = null){
 		//Additional curl intits.
+		$this->url = $url;
+		$this->username = $username;
+		$this->password = $password;
 		foreach($settings as $key=>$value)
 			array_push($this->settings, $this->settings[$key] = $value);
 	}
@@ -24,12 +38,12 @@ class BitbucketHelper{
 	 * Add a comment to the given repository via bitbucket.
 	 * @param string $args The URL, Password, Username, Title, and Comment.
 	 */
-	function addIssue($args = Arguments){
+	function addIssue($title, $content){
 		$this->ch = curl_init();
 		foreach($settings as $key=>$value){
 			curl_setopt($this->ch,  $key, $value);
 		}
-		$data = "title=".$args->title."&content=".$args->comment ."&status=new&priority=trivial&kind=bug";
+		$data = "title=$title&content=$content&status=new&priority=trivial&kind=bug";
 		
 		//Set the URL to get to.
 		curl_setopt($this->ch, CURLOPT_URL, $args->url . "/issues");
@@ -51,5 +65,7 @@ class BitbucketHelper{
 		curl_close($this->ch);
 	}
 }
-
+	function isValid(){
+		
+	}
 ?>
