@@ -8,38 +8,61 @@
 class GithubHelper{
 	
 	private $ch;
-	function __construct(){
+	private $url;
+	private $username;
+	private $password;
+	private $settings = array(
+		CURLOPT_HTTPAUTH => CURLAUTH_BASIC,
+		CURLOPT_POST  => true,
+		CURLOPT_HEADER  => true,
+		CURLOPT_CUSTOMREQUEST  => 'POST',
+		CURLOPT_SSL_VERIFYPEER => false,
+		CURLOPT_RETURNTRANSFER => true
+	);
+	/**
+	 * Basic constructor for communicating with Github.
+	 * @param string $url The URL of the repository.
+	 * @param string $username The Username you wish to use.
+	 * @param string $password The password you wish to use.
+	 * @param string $settings (Optional) Any additional settings you want via curl_setopt.
+	 */
+	function __construct($url, $username, $password,$settings = null){
 		//Basic declaration of curl intits. 
-		$this->ch = curl_init();
-		curl_setopt($this->ch, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
-		curl_setopt($this->ch, CURLOPT_POST, true);
-		curl_setopt($this->ch, CURLOPT_HEADER, true);
-		curl_setopt($this->ch,CURLOPT_CUSTOMREQUEST, 'POST');
-		curl_setopt($this->ch, CURLOPT_SSL_VERIFYPEER, false);
-		curl_setopt($this->ch,CURLOPT_RETURNTRANSFER, true);
+		$this->url = $url;
+		$this->username = $username;
+		$this->password = $password;
+		foreach($settings as $key=>$value)
+			array_push($this->settings, $this->settings[$key] = $value);
 	}
 	
 	/**
-	 * Add a comment to the given repository. 
-	 * @param string $args The URL, Password, Username, Title, and Comment. 
+	 * Add a comment to the given repository.
+	 * @param String $title The title you want to give.
+	 * @param String $content The contents you want to give. 
 	 */
-	function addIssue($args = Arguments){
+	function addIssue($title, $content){
 		
-		$data = array( "title" => $args->title,
-				"body" => $args->comment );
+		$data = array( "title" => $title,
+				"body" => $content );
+		$this->ch = curl_init();
 		$data = json_encode($data);
+		
 		//Set the URL to get to. 
-		curl_setopt($this->ch, CURLOPT_URL, $args->url . "/issues");
+		foreach($this->settings as $key=>$value){
+			curl_setopt($this->ch,  $key, $value);
+		}
+		
+		curl_setopt($this->ch, CURLOPT_URL, $this->url . "/issues");
 		
 		//Set the options up. 
-		curl_setopt($this->ch, CURLOPT_USERPWD, $args->userName .":" . $args->password);
+		curl_setopt($this->ch, CURLOPT_USERPWD, $this->username .":" . $this->password);
 		curl_setopt($this->ch, CURLOPT_POSTFIELDS, $data);
 		curl_setopt($this->ch, CURLOPT_HTTPHEADER, array(
 		'Content-Type: application/json',
 		'Content-Length: ' . strlen($data))
 		);
 		//Github requires a useragent so I use the username. 
-		curl_setopt($this->ch,CURLOPT_USERAGENT, $args->userName);
+		curl_setopt($this->ch,CURLOPT_USERAGENT, $this->username);
 		
  		$result = curl_exec($this->ch);
  		$info = curl_getinfo($this->ch, CURLINFO_HTTP_CODE );
@@ -52,5 +75,7 @@ class GithubHelper{
 		curl_close($this->ch);
 	}
 	
-	
+	function isValid(){
+		//TODO: Boolean to see if the connection is valid.
+	}
 }

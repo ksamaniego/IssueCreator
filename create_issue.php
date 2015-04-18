@@ -57,8 +57,8 @@ if(substr($settings->url, -1) == '/')
 
 //We need to decide which site to go to.  
 if (strpos($settings->url,'https://api.github.com') !== false) {
-	$git = new GithubHelper(); 
-	$git->addIssue($settings);
+	$git = new GithubHelper($settings->url, $settings->userName, $settings->password);
+	$git->addIssue($settings->title, $settings->comment);
 }
 else if(strpos($settings->url,'https://bitbucket.org') !== false){
 	$bitbucket = new BitbucketHelper($settings->url, $settings->userName, $settings->password);

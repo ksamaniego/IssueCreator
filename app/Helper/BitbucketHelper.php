@@ -20,7 +20,7 @@ class BitbucketHelper{
 			CURLOPT_RETURNTRANSFER => true
 	);
 	/**
-	 * 
+	 * Basic constructor for communicating with BitBucket.
 	 * @param string $url The URL of the repository. 
 	 * @param string $username The Username you wish to use. 
 	 * @param string $password The password you wish to use. 
@@ -31,7 +31,7 @@ class BitbucketHelper{
 		$this->url = $url;
 		$this->username = $username;
 		$this->password = $password;
-		foreach($settings as $key=>$value)
+		foreach($this->settings as $key=>$value)
 			array_push($this->settings, $this->settings[$key] = $value);
 	}
 	/**
@@ -40,15 +40,15 @@ class BitbucketHelper{
 	 */
 	function addIssue($title, $content){
 		$this->ch = curl_init();
-		foreach($settings as $key=>$value){
+		foreach($this->settings as $key=>$value){
 			curl_setopt($this->ch,  $key, $value);
 		}
 		$data = "title=$title&content=$content&status=new&priority=trivial&kind=bug";
 		
 		//Set the URL to get to.
-		curl_setopt($this->ch, CURLOPT_URL, $args->url . "/issues");
+		curl_setopt($this->ch, CURLOPT_URL, $this->url . "/issues");
 		//Set the options up.
-		curl_setopt($this->ch, CURLOPT_USERPWD, $args->userName .":" . $args->password);
+		curl_setopt($this->ch, CURLOPT_USERPWD, $this->username .":" . $this->password);
 		curl_setopt($this->ch, CURLOPT_POSTFIELDS, $data);
 		curl_setopt($this->ch, CURLOPT_HTTPHEADER, array(
 		'Accept: application/json',
@@ -66,6 +66,6 @@ class BitbucketHelper{
 	}
 }
 	function isValid(){
-		
+		//TODO: Boolean to see if the connection is valid.
 	}
 ?>
