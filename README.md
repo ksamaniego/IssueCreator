@@ -20,4 +20,4 @@ General Use:
 
 ## License
 
-The MIT License (MIT). Please see [License File](https://github.com/ksamaniego/IssueCreator/blob/master/README.md) for more information.
+The MIT License (MIT). Please see [License File](LICENSE) for more information.
